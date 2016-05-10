@@ -1,0 +1,15 @@
+{
+  "name": "musicmuse",
+  "version": "1.0.0",
+  "description": "a musicmouse clooooooone",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "sjmc",
+  "license": "ISC",
+  "devDependencies": {
+    "grunt": "^1.0.1",
+    "http-server": "^0.9.0"
+  }
+}

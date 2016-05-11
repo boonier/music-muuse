@@ -3,8 +3,10 @@ var keySize = offset = 30, // in px
 	noteScale = [0, 1, 0, 1, 0, 0, 1, 0, 1, 0, 1, 0],
 	numOctaves = 6,
 	totalNotes = noteScale.length * numOctaves,
-	noteW = gridSize / totalNotes,
-	spacer = 0;
+	noteW = gridSize / totalNotes;
+
+var xlabel, labelStrg, xSlider, ySlider;
+
 
 function setup() {
 	createCanvas(gridSize + (offset * 2), gridSize + (offset * 2)); // 576px grid actual
@@ -15,16 +17,22 @@ function setup() {
 			fill('#FFFFFF');
 		}
 		noStroke();
-		rect(spacer + offset, 0, noteW, keySize); //top
-		rect(spacer + offset, height - keySize, noteW, keySize); //bottom
-		rect(0, spacer + offset, keySize, noteW); //left
-		rect(width-keySize, spacer + offset, keySize, noteW); //right
-		spacer += noteW;
+		rect((noteW * i) + offset, 0, noteW, keySize); //top
+		rect((noteW * i) + offset, height - keySize, noteW, keySize); //bottom
+		rect(0, (noteW * i) + offset, keySize, noteW); //left
+		rect(width - keySize, (noteW * i) + offset, keySize, noteW); //right
 	}
-	spacer = 0;
+
+	xSlider = new Slider(offset, offset, gridSize, noteW, '#ccc');
+	ySlider = new Slider(offset, offset, noteW, gridSize, '#ccc');
+
+	//
+	xlabel = createDiv();
 }
 
 function draw() {
+
+	rect(offset, offset, gridSize, gridSize);
 	for (var i = 0; i < totalNotes; i++) {
 		if (noteScale[i % noteScale.length] == 1) {
 			fill('#f2f2f2');
@@ -32,9 +40,31 @@ function draw() {
 			noFill();
 		}
 		noStroke();
-		rect(spacer + offset, offset, noteW, gridSize); // hor
-		rect(offset, spacer + offset, gridSize, noteW); // vert
-		spacer += noteW;
+		rect((noteW * i) + offset, offset, noteW, gridSize); // hor
+		rect(offset, (noteW * i) + offset, gridSize, noteW); // vert
 	}
-	spacer = 0;
+	//
+	labelStrg = int(mouseX) + ', ' + int(mouseY);
+	xlabel.html(labelStrg);
+
+	xSlider.update(offset, mouseY - (noteW / 2));
+	ySlider.update(mouseX - (noteW / 2), offset);
+	xSlider.display();
+	ySlider.display();
+}
+
+var Slider = function (x, y, w, h, c) {
+	this.x = x;
+	this.y = y;
+	this.w = w;
+	this.h = h;
+	
+	this.update = function (mX, mY) {
+		this.x = constrain(mX, offset, width - offset - noteW);
+		this.y = constrain(mY, offset, width - offset - noteW);
+	}
+	this.display = function () {
+		fill(c);
+		rect(this.x, this.y, this.w, this.h);
+	}
 }

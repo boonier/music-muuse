@@ -28,6 +28,7 @@ function setup() {
 
 	//
 	xlabel = createDiv();
+	xlabel.style('font-size', '1em').style('text-align', 'center').style('font-family', 'Arial Black').style('margin-top', '1em')
 }
 
 function draw() {
@@ -44,7 +45,7 @@ function draw() {
 		rect(offset, (noteW * i) + offset, gridSize, noteW); // vert
 	}
 	//
-	labelStrg = int(mouseX) + ', ' + int(mouseY);
+	labelStrg = int(mouseX) + ':' + int(mouseY);
 	xlabel.html(labelStrg);
 
 	xSlider.update(offset, mouseY - (noteW / 2));
@@ -58,10 +59,13 @@ var Slider = function (x, y, w, h, c) {
 	this.y = y;
 	this.w = w;
 	this.h = h;
-	
+
 	this.update = function (mX, mY) {
-		this.x = constrain(mX, offset, width - offset - noteW);
-		this.y = constrain(mY, offset, width - offset - noteW);
+		let intX = (int(mX / noteW) * noteW) - 2,
+			intY = (int(mY / noteW) * noteW) - 2;
+
+		this.x = constrain(intX, offset, width - offset - noteW);
+		this.y = constrain(intY, offset, width - offset - noteW);
 	}
 	this.display = function () {
 		fill(c);

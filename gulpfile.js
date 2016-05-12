@@ -7,7 +7,7 @@ gulp.task('browser-sync', function () {
         server: {
             baseDir: "./"
         },
-        files: "./"
+        files: "./assets"
         
     });
 });

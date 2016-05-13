@@ -4,7 +4,7 @@ var keySize = offset = 30, // in px
 	numOctaves = 6,
 	totalNotes = noteScale.length * numOctaves,
 	noteW = gridSize / totalNotes,
-	xlabel, labelStrg, xSlider, ySlider, intX, intY;
+	xlabel, labelStrg, xSlider, ySlider, intX, intY, prevIntX;
 
 function updateSliders(intX, intY) {
 	xSlider.update(offset, (noteW * intY) - 2);
@@ -37,14 +37,12 @@ var Slider = function (x, y, w, h, c) {
 }
 
 var Sound = function () {
-	
 	this.fmSynth = new Tone.FMSynth().toMaster();
-	this.freq = new Tone();
 	
 	this.play = function (note) {
 		this.fmSynth.triggerAttackRelease( midiToNote(note), '16n');
 	}
-
+	
 }
 
 function setup() {
@@ -96,9 +94,17 @@ function draw() {
 
 	updateSliders(intX, intY);
 	
+		if(intX !== prevIntX) {
+		mySound.play(intX);
+		prevIntX = intX;
+	}
+	
 }
 
 function mouseMoved	() {
-	mySound.play(intX);
+	// if(intX !== prevIntX) {
+	// 	mySound.play(intX);
+	// 	prevIntX = intX;
+	// }
 	return false;
 }

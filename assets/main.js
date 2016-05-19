@@ -1,10 +1,11 @@
-var keySize = offset = 30, // in px
+var keySize = 30,
+	offset = keySize, // in px
 	gridSize = 576,
 	noteScale = [0, 1, 0, 1, 0, 0, 1, 0, 1, 0, 1, 0],
 	numOctaves = 6,
 	totalNotes = noteScale.length * numOctaves,
 	noteW = gridSize / totalNotes,
-	xlabel, labelStrg, xSlider, ySlider, intX, intY, prevIntX;
+	xlabel, labelStrg, xSlider, ySlider, intX, intY, prevIntY, mySound;
 
 function updateSliders(intX, intY) {
 	xSlider.update(offset, (noteW * intY) - 2);
@@ -18,32 +19,52 @@ function midiToNote(note) {
 	return freq.midiToNote(note);
 }
 
-var Slider = function (x, y, w, h, c) {
-	this.x = x;
-	this.y = y;
-	this.w = w;
-	this.h = h;
-
-	this.update = function (mX, mY) {
+class Slider {
+	constructor(x, y, w, h, c) {
+		this.x = x;
+		this.y = y;
+		this.w = w;
+		this.h = h;
+		this.c = c;
+	}
+	update(mX, mY) {
 		this.x = constrain(mX, offset, width - offset - noteW);
 		this.y = constrain(mY, offset, width - offset - noteW);
 	}
-	
-	this.display = function () {
-		fill(c);
+	display() {
+		fill(this.c);
 		rect(this.x, this.y, this.w, this.h);
 	}
-
 }
 
-var Sound = function () {
-	this.fmSynth = new Tone.FMSynth().toMaster();
-	
-	this.play = function (note) {
-		this.fmSynth.triggerAttackRelease( midiToNote(note), '16n');
+class Sound {
+	constructor() {
+		this.fmSynth = new Tone.FMSynth({
+			harmonicity: 1.5,
+			modulationIndex :5.22,
+			carrier: {
+				oscillator: {
+					type: 'sine'
+				}
+			},
+			modulator: {
+				oscillator: {
+					type: 'sine'
+				},
+				envelope: {
+					attack: 1,
+					decay: .2
+				}
+			}
+		});
+		this.fmSynth.toMaster();
+		
 	}
-	
+	play(note) {
+		this.fmSynth.triggerAttackRelease(midiToNote(note), 2);
+	}
 }
+
 
 function setup() {
 	// init p5 stuff
@@ -64,9 +85,9 @@ function setup() {
 		rect(width - keySize, (noteW * i) + offset, keySize, noteW); //right
 	}
 	// slider objects
-	xSlider = new Slider(offset, offset, gridSize, noteW, '#ccc');
-	ySlider = new Slider(offset, offset, noteW, gridSize, '#ccc');
-	
+	xSlider = new Slider(offset, offset, gridSize, noteW, '#aab');
+	ySlider = new Slider(offset, offset, noteW, gridSize, '#fb0');
+
 	//
 	mySound = new Sound();
 }
@@ -87,21 +108,23 @@ function draw() {
 	//
 	labelStrg = int(mouseX) + ':' + int(mouseY);
 	xlabel.html(labelStrg);
-	
+
 	// calc divider index
 	intX = int(mouseX / noteW);
 	intY = int(mouseY / noteW);
+	
+	console.log(intY)
 
 	updateSliders(intX, intY);
-	
-		if(intX !== prevIntX) {
-		mySound.play(intX);
-		prevIntX = intX;
+
+	if (intY !== prevIntY) {
+		mySound.play(totalNotes - intY);
+		prevIntY = intY;
 	}
-	
+
 }
 
-function mouseMoved	() {
+function mouseMoved() {
 	// if(intX !== prevIntX) {
 	// 	mySound.play(intX);
 	// 	prevIntX = intX;

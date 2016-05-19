@@ -1,15 +1,29 @@
-var gulp = require('gulp');
-var browserSync = require('browser-sync').create();
+var gulp = require('gulp'),
+    browserSync = require('browser-sync').create(),
+    babel = require('gulp-babel');
 
-// Static server
-gulp.task('browser-sync', function () {
+// Babel
+gulp.task('js', function () {
+  return gulp.src("assets/main.js")
+    .pipe(babel())
+    .pipe(babel({ presets: ['es2015'] }))
+    .pipe(gulp.dest("dist"));
+});
+
+gulp.task('watch', function () {
+  return gulp.watch('assets/*.js', ['js']);
+});
+
+// Serve
+gulp.task('serve', function () {
     browserSync.init({
         server: {
             baseDir: "./"
         },
-        files: "./assets"
-        
+        files: "./assets" 
     });
+
 });
 
-gulp.task('default', ['browser-sync'])
+
+gulp.task('default', ['js', 'watch', 'serve']);

@@ -45,6 +45,12 @@ class Sound {
 			carrier: {
 				oscillator: {
 					type: 'sine'
+				},
+				envelope: {
+					attack: 1,
+					decay: 0.1,
+					sustain: 0.5,
+					release: 1
 				}
 			},
 			modulator: {
@@ -53,14 +59,16 @@ class Sound {
 				},
 				envelope: {
 					attack: 1,
-					decay: .2
+					decay: .2,
+					sustain: .5,
+					release: 1
 				}
 			}
 		});
 		this.fmSynth.toMaster();
-		
 	}
 	play(note) {
+		console.log(note);
 		this.fmSynth.triggerAttackRelease(midiToNote(note), 2);
 	}
 }
@@ -112,8 +120,6 @@ function draw() {
 	// calc divider index
 	intX = int(mouseX / noteW);
 	intY = int(mouseY / noteW);
-	
-	console.log(intY)
 
 	updateSliders(intX, intY);
 

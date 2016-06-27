@@ -13,6 +13,8 @@ gridSize = 576,
     numOctaves = 6,
     totalNotes = noteScale.length * numOctaves,
     noteW = gridSize / totalNotes,
+    gridBarX = [],
+    gridBarY = [],
     xlabel,
     labelStrg,
     xSlider,
@@ -34,9 +36,27 @@ function midiToNote(note) {
 	return freq.midiToNote(note);
 }
 
-var Slider = function () {
-	function Slider(x, y, w, h, c) {
-		_classCallCheck(this, Slider);
+// class Slider {
+// 	constructor(x, y, w, h, c) {
+// 		this.x = x;
+// 		this.y = y;
+// 		this.w = w;
+// 		this.h = h;
+// 		this.c = c;
+// 	}
+// 	update(mX, mY) {
+// 		this.x = constrain(mX, offset, width - offset - noteW);
+// 		this.y = constrain(mY, offset, width - offset - noteW);
+// 	}
+// 	display() {
+// 		fill(this.c);
+// 		rect(this.x, this.y, this.w, this.h);
+// 	}
+// }
+
+var GridBar = function () {
+	function GridBar(x, y, w, h, c) {
+		_classCallCheck(this, GridBar);
 
 		this.x = x;
 		this.y = y;
@@ -45,21 +65,21 @@ var Slider = function () {
 		this.c = c;
 	}
 
-	_createClass(Slider, [{
+	_createClass(GridBar, [{
 		key: 'update',
-		value: function update(mX, mY) {
-			this.x = constrain(mX, offset, width - offset - noteW);
-			this.y = constrain(mY, offset, width - offset - noteW);
-		}
+		value: function update() {}
 	}, {
 		key: 'display',
 		value: function display() {
 			fill(this.c);
 			rect(this.x, this.y, this.w, this.h);
+			// if(mouseX > this.x || mouseY > this.y) {
+			// 	fill(c);
+			// }
 		}
 	}]);
 
-	return Slider;
+	return GridBar;
 }();
 
 var Sound = function () {
@@ -113,20 +133,30 @@ function setup() {
 	xlabel.style('font-size', '1em').style('text-align', 'center').style('font-family', 'Arial Black').style('margin-top', '1em');
 
 	for (var i = 0; i < totalNotes; i++) {
+		var objCol;
+
 		if (noteScale[i % noteScale.length] == 1) {
 			fill('#333');
+			objCol = '#f2f2f2';
 		} else {
 			fill('#FFFFFF');
+			objCol = '#FFFFFF';
 		}
 		noStroke();
 		rect(noteW * i + offset, 0, noteW, keySize); //top
 		rect(noteW * i + offset, height - keySize, noteW, keySize); //bottom
 		rect(0, noteW * i + offset, keySize, noteW); //left
 		rect(width - keySize, noteW * i + offset, keySize, noteW); //right
+
+		console.log(i);
+
+		gridBarX.push(new GridBar(noteW * i + offset, offset, noteW, gridSize, objCol));
+
+		gridBarY.push(new GridBar(offset, noteW * i + offset, gridSize, noteW, objCol));
 	}
 	// slider objects
-	xSlider = new Slider(offset, offset, gridSize, noteW, '#aab');
-	ySlider = new Slider(offset, offset, noteW, gridSize, '#fb0');
+	// xSlider = new Slider(offset, offset, gridSize, noteW, '#aab');
+	// ySlider = new Slider(offset, offset, noteW, gridSize, '#fb0');
 
 	//
 	mySound = new Sound();
@@ -136,14 +166,19 @@ function draw() {
 
 	rect(offset, offset, gridSize, gridSize);
 	for (var i = 0; i < totalNotes; i++) {
+
 		if (noteScale[i % noteScale.length] == 1) {
 			fill('#f2f2f2');
 		} else {
 			noFill();
 		}
-		noStroke();
-		rect(noteW * i + offset, offset, noteW, gridSize); // hor
-		rect(offset, noteW * i + offset, gridSize, noteW); // vert
+
+		gridBarX[i].display();
+		gridBarY[i].display();
+
+		// noStroke();
+		// rect((noteW * i) + offset, offset, noteW, gridSize); // hor
+		// rect(offset, (noteW * i) + offset, gridSize, noteW); // vert
 	}
 	//
 	labelStrg = int(mouseX) + ':' + int(mouseY);
@@ -153,12 +188,12 @@ function draw() {
 	intX = int(mouseX / noteW);
 	intY = int(mouseY / noteW);
 
-	updateSliders(intX, intY);
+	// updateSliders(intX, intY);
 
-	if (intY !== prevIntY) {
-		mySound.play(totalNotes - intY);
-		prevIntY = intY;
-	}
+	/*if (intY !== prevIntY) {
+ 	mySound.play(totalNotes - intY);
+ 	prevIntY = intY;
+ }*/
 }
 
 function mouseMoved() {

@@ -5,6 +5,8 @@ var keySize = 30,
 	numOctaves = 6,
 	totalNotes = noteScale.length * numOctaves,
 	noteW = gridSize / totalNotes,
+	gridBarX = [],
+	gridBarY = [],
 	xlabel, labelStrg, xSlider, ySlider, intX, intY, prevIntY, mySound;
 
 function updateSliders(intX, intY) {
@@ -19,7 +21,25 @@ function midiToNote(note) {
 	return freq.midiToNote(note);
 }
 
-class Slider {
+// class Slider {
+// 	constructor(x, y, w, h, c) {
+// 		this.x = x;
+// 		this.y = y;
+// 		this.w = w;
+// 		this.h = h;
+// 		this.c = c;
+// 	}
+// 	update(mX, mY) {
+// 		this.x = constrain(mX, offset, width - offset - noteW);
+// 		this.y = constrain(mY, offset, width - offset - noteW);
+// 	}
+// 	display() {
+// 		fill(this.c);
+// 		rect(this.x, this.y, this.w, this.h);
+// 	}
+// }
+
+class GridBar {
 	constructor(x, y, w, h, c) {
 		this.x = x;
 		this.y = y;
@@ -27,15 +47,20 @@ class Slider {
 		this.h = h;
 		this.c = c;
 	}
-	update(mX, mY) {
-		this.x = constrain(mX, offset, width - offset - noteW);
-		this.y = constrain(mY, offset, width - offset - noteW);
+
+	update() {
+
 	}
+
 	display() {
 		fill(this.c);
 		rect(this.x, this.y, this.w, this.h);
+		// if(mouseX > this.x || mouseY > this.y) {
+		// 	fill(c);
+		// }
 	}
 }
+
 
 class Sound {
 	constructor() {
@@ -73,7 +98,6 @@ class Sound {
 	}
 }
 
-
 function setup() {
 	// init p5 stuff
 	createCanvas(gridSize + (offset * 2), gridSize + (offset * 2)); // 576px grid actual//
@@ -81,20 +105,36 @@ function setup() {
 	xlabel.style('font-size', '1em').style('text-align', 'center').style('font-family', 'Arial Black').style('margin-top', '1em')
 
 	for (let i = 0; i < totalNotes; i++) {
+		var objCol;
+
 		if (noteScale[i % noteScale.length] == 1) {
 			fill('#333');
+			objCol = '#f2f2f2';
+
 		} else {
 			fill('#FFFFFF');
+			objCol = '#FFFFFF';
 		}
 		noStroke();
 		rect((noteW * i) + offset, 0, noteW, keySize); //top
 		rect((noteW * i) + offset, height - keySize, noteW, keySize); //bottom
 		rect(0, (noteW * i) + offset, keySize, noteW); //left
 		rect(width - keySize, (noteW * i) + offset, keySize, noteW); //right
+
+		console.log(i);
+		
+		gridBarX.push(new GridBar((noteW * i) + offset, offset, noteW, gridSize, objCol));
+
+		gridBarY.push(new GridBar(offset, (noteW * i) + offset, gridSize, noteW, objCol));
+
+
 	}
 	// slider objects
-	xSlider = new Slider(offset, offset, gridSize, noteW, '#aab');
-	ySlider = new Slider(offset, offset, noteW, gridSize, '#fb0');
+	// xSlider = new Slider(offset, offset, gridSize, noteW, '#aab');
+	// ySlider = new Slider(offset, offset, noteW, gridSize, '#fb0');
+
+
+
 
 	//
 	mySound = new Sound();
@@ -104,14 +144,20 @@ function draw() {
 
 	rect(offset, offset, gridSize, gridSize);
 	for (var i = 0; i < totalNotes; i++) {
+		
+
 		if (noteScale[i % noteScale.length] == 1) {
 			fill('#f2f2f2');
 		} else {
 			noFill();
 		}
-		noStroke();
-		rect((noteW * i) + offset, offset, noteW, gridSize); // hor
-		rect(offset, (noteW * i) + offset, gridSize, noteW); // vert
+
+		gridBarX[i].display();
+		gridBarY[i].display();
+
+		// noStroke();
+		// rect((noteW * i) + offset, offset, noteW, gridSize); // hor
+		// rect(offset, (noteW * i) + offset, gridSize, noteW); // vert
 	}
 	//
 	labelStrg = int(mouseX) + ':' + int(mouseY);
@@ -121,12 +167,12 @@ function draw() {
 	intX = int(mouseX / noteW);
 	intY = int(mouseY / noteW);
 
-	updateSliders(intX, intY);
+	// updateSliders(intX, intY);
 
-	if (intY !== prevIntY) {
+	/*if (intY !== prevIntY) {
 		mySound.play(totalNotes - intY);
 		prevIntY = intY;
-	}
+	}*/
 
 }
 

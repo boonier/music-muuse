@@ -19,23 +19,23 @@ function midiToNote(note) {
 	return freq.midiToNote(note);
 }
 
-// class Slider {
-// 	constructor(x, y, w, h, c) {
-// 		this.x = x;
-// 		this.y = y;
-// 		this.w = w;
-// 		this.h = h;
-// 		this.c = c;
-// 	}
-// 	update(mX, mY) {
-// 		this.x = constrain(mX, offset, width - offset - noteW);
-// 		this.y = constrain(mY, offset, width - offset - noteW);
-// 	}
-// 	display() {
-// 		fill(this.c);
-// 		rect(this.x, this.y, this.w, this.h);
-// 	}
-// }
+class Slider {
+	constructor(x, y, w, h, c) {
+		this.x = x;
+		this.y = y;
+		this.w = w;
+		this.h = h;
+		this.c = c;
+	}
+	update(mX, mY) {
+		this.x = constrain(mX, offset, width - offset - noteW);
+		this.y = constrain(mY, offset, width - offset - noteW);
+	}
+	display() {
+		fill(this.c);
+		rect(this.x, this.y, this.w, this.h);
+	}
+}
 
 class Sound {
 	constructor() {
